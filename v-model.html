@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="lib/vue@2.4.2.js"></script>
+    
+</head>
+<body>
+ <div id="app">
+     <h4>
+         {{msg}}
+     </h4>
+ </div>
+ <script type="text/javascript">
+   var vm=new Vue(
+       {
+         el:"#app",
+         data:{
+             msg:"大家都是好学生，爱敲代码，爱学习，爱思考，简直是完美，没有瑕疵"
+         },
+         methods: {
+             
+         },
+
+       });
+</script>
+</body>
+</html>
