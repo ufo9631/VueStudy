@@ -24,6 +24,9 @@
                     </label>
                     <!--在Vue中，使用事件绑定机制，为元素指定处理函数的时候，加上小括号，就可以给函数传参-->
                     <input type="button" value="添加" class="btn btn-primary" @click="add">
+                    <label >
+                        <input type="text" class="form-control" v-model="keywords">
+                    </label>
                </div>
          </div>
          
@@ -38,11 +41,11 @@
                </tr>
            </thead>
            <tbody>
-               <tr v-for="item in list" :key="item.id">
+               <tr v-for="(item,index) in search(keywords)" :key="item.id">
                     <td>{{item.id}}</td>
                     <td v-text="item.name"></td>
                     <td>{{item.ctime}}</td>
-                    <td><a href="">删除</a></td>
+                    <td><a href="" @click。prevent="del(item.id)">删除</a></td>
 
                </tr>
            </tbody>
@@ -54,6 +57,7 @@
             data:{
                 id:"",
                 name:"",
+                keywords:"",//搜索关键字
                 list:[
                     {id:1,name:'奔驰',ctime:new Date()},
                     {id:2,name:'宝马',ctime:new Date()}
@@ -63,7 +67,52 @@
                 add(){
                     this.list.push({id:this.id,name:this.name,ctime:new Date()});
                     this.id=this.name="";
+                },
+                /*
+                根据id删除数据
+                */
+                del(id){
+                   
+
+                    /*this.list.some((item,i)=>{
+                             if(item.id==id)
+                             {
+                                 //在数组的some方法中，如果 return true 就会立即终止这个数组的后续循环
+                                 this.list.splice(i,1);
+                                 return true;
+                             }
+
+                    });*/
+
+                    //快速找到索引
+                var index= this.list.findIndex(item=>{
+                        if(item.id==id)
+                        {
+                            return true;
+                        }
+                    });
+
+                    this.list.splice(index,1);
                 }
+               
+            },
+            search(keywords){
+                var newList=[];
+                this.list.forEach(item=>{
+                    if(item.name.indexOf(keywords)>-1)
+                    {
+                        newList.push(item);
+                    }
+                });
+                return newList;
+                // forEach  filter findIndex 这些都是数组的新方法 都会对数组的每一项，进行遍历
+            /*   newList=this.list.filter(item=>{ //返回一个新的数组
+                    if(item.name.includes(keywords))//es6中为字符串提供了一个新方法，叫做String.prototype.includes('要包含的字符串')
+                    {
+                        return item;
+                    }
+                });*/
+            
             },
 
          });
