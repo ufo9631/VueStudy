@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap.min.css" /> 
+    <link rel="stylesheet" type="text/css"  href="lib/animate.css">
+ <script src="lib/vue@2.4.2.js"></script>
+ <style>
+     .ball{
+         width:15px;
+         height:15px;
+         border-radius:50%;
+         background-color:red;
+     }
+ </style>
+</head>
+<body>
+     <div id="app">
+         <input type="button" value="加入购物车" @click="flag=!flag">
+        <transition @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter">
+            <div class="ball" v-show="flag"></div>
+        </transition>
+         
+     </div>
+     <script >
+         var vm=new Vue({
+            el:"#app",
+            data:{
+                flag:false
+            },
+            methods: {
+                //注意：动画钩子函数的第一个参数：el,表示要执行动画的那个dom元素，是个原生的js对象
+                beforeEnter(el){//动画入场之前 动画还没开始   设置起始样式
+                    el.style.transform="translate(0,0)";//设置小球的起始位置
+                },
+                enter(el,done){//表示动画开始的样式   设置小球完成动画之后的  结束状态
+                    el.offsetWidth;//这句话没有实际效果  但是不写 出不来动画
+                    el.style.transform="translate(150px,150px)";
+                    el.style.transition="all 1s ease";
+                    done();//done就是afterEnter这个函数     done是afterEnter函数的引用
+                },
+                afterEnter(el){//动画完成之后
+                    this.flag=false;
+                }
+            },
+
+         });
+     </script>
+</body>
+</html>

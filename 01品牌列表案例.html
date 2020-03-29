@@ -23,9 +23,10 @@
                        <input type="text" class=" form-control" v-model="name" name="" id="">
                     </label>
                     <!--在Vue中，使用事件绑定机制，为元素指定处理函数的时候，加上小括号，就可以给函数传参-->
-                    <input type="button" value="添加" class="btn btn-primary" @click="add">
+                    <input type="button" value="添加" class="btn btn-primary" @click="add" @keyup.enter="add">
                     <label >
-                        <input type="text" class="form-control" v-model="keywords">
+                        <!--注意：Vue 中所有的指令 ，在调用的时候 都以 v-开头-->
+                        <input type="text" class="form-control" v-model="keywords" id="search" v-focus  v-color="'blue'">
                     </label>
                </div>
          </div>
@@ -44,20 +45,77 @@
                <tr v-for="(item,index) in search(keywords)" :key="item.id">
                     <td>{{item.id}}</td>
                     <td v-text="item.name"></td>
-                    <td>{{item.ctime}}</td>
+                    <td>{{item.ctime | dataFormat('yyyy-MM-dd')}}</td>
                     <td><a href="" @click。prevent="del(item.id)">删除</a></td>
 
                </tr>
            </tbody>
        </table>
+       <p>{{msg | msgFormat('x')|test}}</p>
      </div>
      <script >
+         
+       //  Vue.filter('过滤器的名称',function(){});
+       //过滤器的function，第一个参数已经被规定死，永远都是过滤器管道符前面传递的数据,后面的参数才是过滤器自己传递的参数
+       Vue.filter('msgFormat',function(data,arg){
+        return data.replace('l',arg);
+      });
+      Vue.filter('test',function(data){
+       return data+"---------";
+     });
+ 
+     //自定义全局按键修饰符
+     Vue.config.keyCodes.f2=113;
+
+     //使用Vue.directive()定义全局的指令
+     //其中：参数1：指令的名称，注意在定义的时候，指令的名称前面，不需要加v-前缀
+     //但是在调用的时候必须在指令名称前 加上 v-前缀来处理
+     //参数2是个对象，这个对象身上有一些指令相关的函数，这些函数可以在特定的阶段执行相关操作
+     Vue.directive("focus",{
+         bind:function(el){//每当指令绑定在元素上的时候，会立即执行bind函数，只会执行一次
+           //在元素 刚绑定了指定的时候，还没有插入到DOm中去，这个时候，调用focus方法没有作用
+           //因为一个元素要插入到Dom的时候才会获得焦点
+           //el.focus();
+         },
+         inserted:function(el){//表示元素插入到DOm中的时候，会执行inserted 触发一次
+            el.focus();  //在每个函数中，第一个参数永远是el,表示 被绑定了指定的那个元素，这个el参数，是一个原生的js对象（DOM对象）
+         },
+         updated:function(){//当VNode更新的时候，会执行updated，可能会触发多次
+
+         }
+     });
+  //自定义一个设置字体颜色的指令
+     Vue.directive("color",{
+        bind:function(el,binding){//每当指令绑定在元素上的时候，会立即执行bind函数，只会执行一次
+           // el.style.color="red"; //和样式相关的操作，一般可以放在bind执行
+           el.style.color=binding.value;  //binding  钩子函数的第二个参数，详细请查看自定义指令参数说明
+        }
+     });
+
+    //全局过滤器  所有的vm实例都能共享
+     Vue.filter('dataFormat',function(dataStr,pattrn=""){
+         var dt=new Date(dataStr);
+         var y=dt.getFullYear();
+         var m=dt.getMonth()+1;
+         var d=dt.getDate();
+         if(pattrn&&pattrn.toLowerCase()==='yyyy-mm-dd')
+         {
+           return `${y}-${m}-${d}`; //模板字符串
+         }else{
+             var hh=dt.getHours();
+             var mm=dt.getMinutes();
+             var ss=dt.getSeconds();
+             return `${y}-${m}-${d} ${hh}:${mm}:${ss}`; //模板字符串
+         }
+       //  return y+'-'+m+'-'+d;
+       });
          var vm=new Vue({
             el:"#app",
             data:{
                 id:"",
                 name:"",
                 keywords:"",//搜索关键字
+                msg:"Hello world",
                 list:[
                     {id:1,name:'奔驰',ctime:new Date()},
                     {id:2,name:'宝马',ctime:new Date()}
@@ -72,8 +130,6 @@
                 根据id删除数据
                 */
                 del(id){
-                   
-
                     /*this.list.some((item,i)=>{
                              if(item.id==id)
                              {
@@ -93,29 +149,67 @@
                     });
 
                     this.list.splice(index,1);
-                }
+                },
+                search(keywords){
+                    var newList=[];
+                    this.list.forEach(item=>{
+                        if(item.name.indexOf(keywords)>-1)
+                        {
+                            newList.push(item);
+                        }
+                    });
+                    return newList;
+                    // forEach  filter findIndex 这些都是数组的新方法 都会对数组的每一项，进行遍历
+                /*   newList=this.list.filter(item=>{ //返回一个新的数组
+                        if(item.name.includes(keywords))//es6中为字符串提供了一个新方法，叫做String.prototype.includes('要包含的字符串')
+                        {
+                            return item;
+                        }
+                    });*/
+                
+                },
+
                
             },
-            search(keywords){
-                var newList=[];
-                this.list.forEach(item=>{
-                    if(item.name.indexOf(keywords)>-1)
+            filters:{//定义私有过滤器  过滤器有两个条件 [过滤器名称和处理函数]
+                //过滤器调用的时候  采用的是就近原则，如果私有过滤器和全局过滤器名称一致了，这个时候优先调用私有的过滤器
+                dateFormat:function(dataStr,pattrn=""){
+                    var dt=new Date(dataStr);
+                    var y=dt.getFullYear();
+                    var m=(dt.getMonth()+1).toString().padStart(2,"0");
+                    var d=dt.getDate();
+                    if(pattrn&&pattrn.toLowerCase()==='yyyy-mm-dd')
                     {
-                        newList.push(item);
+                      return `${y}-${m}-${d}`; //模板字符串
+                    }else{
+                        var hh=dt.getHours().toString().padStart(2,"0");  //padStart es6方法 往前补位 第一个参数的补完的位数  第一个参数是要补的值
+                        var mm=dt.getMinutes().toString().padStart(2,"0");
+                        var ss=dt.getSeconds().toString().padStart(2,"0");
+                        return `${y}-${m}-${d} ${hh}:${mm}:${ss}`; //模板字符串
                     }
-                });
-                return newList;
-                // forEach  filter findIndex 这些都是数组的新方法 都会对数组的每一项，进行遍历
-            /*   newList=this.list.filter(item=>{ //返回一个新的数组
-                    if(item.name.includes(keywords))//es6中为字符串提供了一个新方法，叫做String.prototype.includes('要包含的字符串')
-                    {
-                        return item;
-                    }
-                });*/
-            
+                  //  return y+'-'+m+'-'+d;
+                }
             },
+            directives:{//私有指令
+                'fontWeight':{//设置字体指令
+                    bind:function(el,binding){
+                        el.style.fontWeight=binding.value;
+                    }
+                },
+                'fontSize':function(el,binding){//(指令的简写方式) 注意如果没指定钩子函数 直接定义function 相当于把代码写到了bind和update中去
+                        el.style.fontSize=parseInt(binding.value);
+                }
+
+            }
 
          });
+
+
+
+         
+
      </script>
 </body>
 </html>
+
+<!---过滤器调用时候的格式  {{name | nameope}}  调用name之前会先调用nameope--->

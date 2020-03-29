@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+ <style ref="stylesheet" href="lib/bootstrap.min.css"></style>
+ <script src="lib/vue@2.4.2.js"></script>
+ <style>
+     /*进入之前的  元素的起始状态，此时还没有开始进入*/
+     /*v-leave-to 这是动画离开之后，离开的终止状态，此时，元素动画已经结束*/
+      .v-enter,
+     .v-leave-to{
+         opacity: 0;
+         transform: translateX(150px);
+     }
+     /*v-enter-active:入场动画的时间段*/
+     /*v-leave-active 离场动画的时间段*/
+     .v-enter-active,
+     .v-leave-active{
+         transition: all 0.4s ease;
+     }
+
+
+
+
+     .my-enter,
+     .my-leave-to{
+         opacity: 0;
+         transform: translateY(70px);
+     }
+     /*v-enter-active:入场动画的时间段*/
+     /*v-leave-active 离场动画的时间段*/
+     .my-enter-active,
+     .my-leave-active{
+         transition: all 0.4s ease;
+     }
+ </style>
+</head>
+<body>
+     <div id="app">
+        <input type="button" value="toggle" @click="flag=!flag">
+        <!--使用transition元素，把需要被动画控制的元素包裹起来-->
+        <!--transition元素 ，是Vue官方提供-->
+        <transition>
+        <H3 v-if="flag"> 这是一个动画 </H3>
+         </transition>
+
+    <input type="button" value="toggle2" @click="flag2=!flag2">
+    <transition name="my">
+        <H6 v-if="flag2"> 这是一个H6动画 </H6>
+     </transition>
+
+     </div>
+     <script >
+         var vm=new Vue({
+            el:"#app",
+            data:{
+                flag:false,
+                flag2:false
+            },
+            methods: {
+                
+            },
+
+         });
+     </script>
+</body>
+</html>

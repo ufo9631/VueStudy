@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap.min.css" /> 
+ <script src="lib/vue@2.4.2.js"></script>
+</head>
+<body>
+     <div id="app">
+            <!--在被控制的#app外面，使用template元素，定义组件的html模板结构-->
+            <mycon1></mycon1>
+            <login></login>
+     </div>
+     <template id="temp1">
+         <div>
+             <h1>
+                 这是通过template元素，在外部定义的组件结构，这个方式，有代码的智能提示
+             </h1>
+             <h2>好用，不错！</h2>
+         </div>
+     </template>
+     <script >
+         Vue.component('mycon1',{
+             template:'#temp1'
+         })
+         var vm=new Vue({
+            el:"#app",
+            data:{
+
+            },
+            methods: {
+                
+            },
+            components:{//定义 实例内的私有组件
+                login:{
+                    template:"<h1>这是私有的组件</h1>"
+                }
+
+            }
+
+         });
+     </script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+ <style ref="stylesheet" href="lib/bootstrap.min.css"></style>
+ <script src="lib/vue@2.4.2.js"></script>
+ <!--this.$http.jsonp-->
+  <script src="lib/vue-resource.js"></script>
+</head>
+<body>
+     <div id="app">
+        <input type="button" value="get请求" @click="getInfo">
+        <input type="button" value="post请求" @click="postInfo">
+     </div>
+     <script >
+         var vm=new Vue({
+            el:"#app",
+            data:{
+
+            },
+            methods: {
+                getInfo(){//发起get请求
+                    this.$http.get("http://vue.studyit.io/api/getlunbo",{}).then(function(result){
+                        console.log(result);
+                    });
+
+                },
+                postInof(){
+                    this.$http.post('http://vue.studyit.io/api/post',{},{}).then(result=>{
+                        
+                    });
+                }
+            },
+
+         });
+     </script>
+</body>
+</html>
