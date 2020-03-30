@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap.min.css" /> 
+ <script src="lib/vue@2.4.2.js"></script>
+</head>
+<body>
+     <div id="app">
+        <!--父组件可以在引用子组件的时候，通过属性绑定（v-bind）的形式，把需要传递给子组件的数据以属性绑定的形式传递到子组件中，供子组件使用-->
+      <com1 v-bind:parentmsg="msg"></com1>
+     </div>
+     <script >
+         //通过对象字面量的形式定义对象
+         var login={
+             template:"<h1></h1>"
+         };
+         // Vue.component 把组件注册对象，注册为一个全局的Vue组件
+         Vue.component("mylogin",login);
+         var vm=new Vue({
+            el:"#app",
+            data:{
+                msg:'123 父组件数据'
+            },
+            methods: {
+                
+            },
+            components:{
+                com1:{
+                    data(){//注意，子组件的data数据，并不是通过父组件传递过来的，而是子组件自身私有的，比如：子组件通过ajax请求回来的数据
+                        title:"123",
+                        content:"qqq"
+                    },
+                    template:"<h1 @click='change'>测试子组件------{{parentmsg }}</h1>",
+                    //props中的数据是只读的，无法重新赋值
+                    props:['parentmsg'],//把父组件传递过来的parentmsg属性，现在props数组中定义一下，这样才能使用
+                    methods:{
+                        change(){
+                            
+                        }
+                    }
+                }
+            }
+
+         });
+     </script>
+</body>
+</html>
