@@ -5,6 +5,21 @@
 //由于es6的代码太高级，浏览器解析不来， >webpack src/main.js --output dist/bundle.js
 import $ from 'jquery'
 
+import './css/index.css' //使用import导入css样式表，注意 webpack，默认只能打包处理js类型的文件，无法处理其它的非js类型文件
+//如果要处理非js类型的文件，我们需要手动安装一些第三方的loader加载器
+//1.如果要打包处理css文件需要安装npm i style-loader css-loader -D
+//2.打开webpack.config.js这个配置文件，在里面新增一个配置节点，叫做mudule，它是一个对象，这个module对象身上 有个rules属性，这个rules属性是个数组，这个数组中存放所有第三方文件的配合和处理规则
+
+import './css/index.less'
+
+
+//注意：webpack 处理第三方文件类型过程
+//1.发现这个要处理的文件不是js文件，然后就去配置文件中查找有没有第三方loader 规则
+//2.如果能找到对应规则 就会调用对应的loader处理 这种文件类型
+//3.在调用loader是从后往前调用
+//4.当最后一个loader调用完毕，会把处理的结果交给webpack进行打包合并并输出到bundle.js中去
+
+
 $(function(){
     $('li:odd').css("backgroundColor",'black');
     $('li:even').css("backgroundColor",function(){
