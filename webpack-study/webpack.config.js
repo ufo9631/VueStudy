@@ -33,7 +33,11 @@ module.exports={
  module:{//这个节点配置第三方模块的加载器
   rules:[//配置所有第三方的匹配规则
     {test:/\.css$/,use:['style-loader','css-loader']},//配置处理.css文件的第三方loader规则
-    {test:/\.less$/,use:['style-loader','css-loader','less-loader']} //处理less的第三方规则
+    {test:/\.less$/,use:['style-loader','css-loader','less-loader']}, //处理less的第三方规则
+    {test:/\.(jpg|png|gif|bmp|jpeg)$/,use:'url-loader?limit=7631&name=[hash:8]-[name].[ext]'}, //处理图片路径的loader
+    // limit=7631 给定的值是图片的大小单位是byte，如果给的值大于图片的大小那么图片就会被转为base64,如果值小于等于图片的值就不会被转为base64
+    // [name].[ext] 加上这个属性 图片名称就不会被替换为哈希值  [hash:8]在图片面前放8位的哈希值
+    {test:/\.js$/,use:'babel-loader',exclude:/node_modules/} //这是配置Babel，用来转换高级js
   ]
  }
 }
